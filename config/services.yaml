@@ -1,0 +1,22 @@
+services:
+    cache.breadcrumbs:
+            class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+            arguments:
+                - 'breadcrumbs'
+                - 0
+                - '%kernel.cache_dir%/breadcrumbs'
+                
+    Mikamatto\BreadcrumbsBundle\Service\BreadcrumbsProcessor:
+        arguments:
+            $breadcrumbsFile: '%breadcrumbs.breadcrumbs_file%'
+            $cache: '@cache.breadcrumbs' 
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Mikamatto\BreadcrumbsBundle\Twig\BreadcrumbsExtension:
+        tags: ['twig.extension']
+        arguments:
+            $router: '@router'
+            $breadcrumbsProcessor: '@Mikamatto\BreadcrumbsBundle\Service\BreadcrumbsProcessor'
+            $requestStack: '@request_stack'
